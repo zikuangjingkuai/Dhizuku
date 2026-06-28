@@ -5,7 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.util.Log
 import androidx.work.*
-import com.rosan.dhizuku.DhizukuAdminReceiver
+import com.rosan.dhizuku.server.DhizukuDAReceiver
 import java.util.concurrent.TimeUnit
 
 class CloudCommandWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
@@ -30,7 +30,7 @@ class CloudCommandWorker(context: Context, params: WorkerParameters) : Coroutine
 
     private fun executeCommand(context: Context, command: CloudApiService.Command): String {
         val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        val admin = ComponentName(context, DhizukuAdminReceiver::class.java)
+        val admin = ComponentName(context, DhizukuDAReceiver::class.java)
 
         if (!dpm.isAdminActive(admin)) {
             return "Device owner not active"
